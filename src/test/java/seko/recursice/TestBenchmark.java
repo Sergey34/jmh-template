@@ -22,7 +22,7 @@ public class TestBenchmark {
     @Test
     public void foo() throws Exception {
         setup();
-        List<String> tables = getTablesRO(f20, new ArrayList<>());
+        List<String> tables = getTablesRecursiveOptimized(f20, new ArrayList<>());
         Assertions.assertThat(tables).hasSize(20);
     }
 
@@ -80,8 +80,8 @@ public class TestBenchmark {
 
     @Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
-    public void recursiveO(Blackhole blackhole) throws Exception {
-        List<String> tables = getTablesRO(f20, new ArrayList<>());
+    public void recursiveOptimized(Blackhole blackhole) throws Exception {
+        List<String> tables = getTablesRecursiveOptimized(f20, new ArrayList<>());
         Assertions.assertThat(tables).hasSize(20);
         blackhole.consume(tables);
     }
@@ -94,12 +94,12 @@ public class TestBenchmark {
         blackhole.consume(tables);
     }
 
-    private List<String> getTablesRO(FilterConfig f20, List<String> tables) {
+    private List<String> getTablesRecursiveOptimized(FilterConfig f20, List<String> tables) {
         tables.add(f20.getTable());
 
         if (f20.getFilterConfigs() != null) {
             for (FilterConfig filterConfig : f20.getFilterConfigs()) {
-                getTablesRO(filterConfig, tables);
+                getTablesRecursiveOptimized(filterConfig, tables);
             }
         }
         return tables;
